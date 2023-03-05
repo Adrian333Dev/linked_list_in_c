@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct node
 {
@@ -15,6 +16,11 @@ Node *insert_at_tail(Node *head, int new_value);
 Node *delete_at_head(Node *head);
 Node *delete_at_tail(Node *head);
 
+int length(Node *head);
+bool is_member(Node *node, int find_value);
+int count_matches(Node *node, int find_value);
+void replace_matches(Node *node, int find_value, int replace_value);
+
 int main()
 {
   Node *list1_head = NULL;
@@ -23,13 +29,11 @@ int main()
   list1_head = insert_at_head(list1_head, 5);
   list1_head = insert_at_head(list1_head, 3);
   list1_head = insert_at_tail(list1_head, 10);
-  list1_head = insert_at_tail(list1_head, 20);
-  list1_head = insert_at_tail(list1_head, 30);
+  list1_head = insert_at_tail(list1_head, 10);
+  list1_head = insert_at_tail(list1_head, 10);
 
-  print_list(list1_head);
-  printf("After: \n");
-  list1_head = delete_at_head(list1_head);
-  list1_head = delete_at_tail(list1_head);
+  replace_matches(list1_head, 10, 20);
+
   print_list(list1_head);
 }
 
@@ -112,5 +116,49 @@ Node *delete_at_tail(Node *head)
     prev->next = NULL;
     free(current);
     return head;
+  }
+}
+
+int length(Node *head)
+{
+  Node *current = head;
+  int len = 0;
+  while (current != NULL)
+  {
+    len++;
+    current = current->next;
+  }
+
+  return len;
+}
+
+bool is_member(Node *node, int find_value)
+{
+  if (node == NULL)
+    return false;
+  else if (node->value == find_value)
+    return true;
+  else
+    return is_member(node->next, find_value);
+}
+
+int count_matches(Node *node, int find_value)
+{
+  if (node == NULL)
+    return 0;
+  else if (node->value == find_value)
+    return 1 + count_matches(node->next, find_value);
+  else
+    return count_matches(node->next, find_value);
+}
+
+void replace_matches(Node *node, int find_value, int replace_value)
+{
+  if (node != NULL)
+  {
+    if (node->value == find_value)
+      node->value = replace_value;
+
+    replace_matches(node->next, find_value, replace_value);
   }
 }
